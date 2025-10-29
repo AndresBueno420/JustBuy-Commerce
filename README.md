@@ -1,4 +1,10 @@
-# 🚀 Scalable E-commerce Deployment on AWS with IaC
+# Scalable E-commerce Deployment on AWS with IaC
+
+[![Project Status](https://img.shields.io/badge/Status-Deployment%20Complete-brightgreen)](https://github.com/badges/shields)
+[![IaC Tool](https://img.shields.io/badge/IaC-CloudFormation-orange?logo=amazon-aws)](https://aws.amazon.com/cloudformation/)
+[![Cloud Provider](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazon-aws&logoColor=FF9900)](https://aws.amazon.com/)
+[![Back-end](https://img.shields.io/badge/Backend-Node.js%20%26%20Express-448833?logo=nodedotjs)](https://nodejs.org/)
+[![Database](https://img.shields.io/badge/Database-AWS%20RDS-527FFF?logo=amazon-aws)](https://aws.amazon.com/rds/)
 
 ## Project Overview
 
@@ -25,7 +31,7 @@ Our main goal was to deploy a simple e-commerce application (built with **Node.j
 
 ---
 
-## 💻 Application Components
+## Application Components
 
 The deployed application includes the following basic functionalities:
 
@@ -35,7 +41,7 @@ The deployed application includes the following basic functionalities:
 
 ---
 
-## ⚙️ AWS Architecture Deployed
+## AWS Architecture Deployed
 
 The infrastructure is defined in the `cloudformation/` folder and follows best practices for cloud deployments:
 
