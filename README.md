@@ -1,6 +1,5 @@
 # Scalable E-commerce Deployment on AWS with IaC
 
-[![Project Status](https://img.shields.io/badge/Status-Deployment%20Complete-brightgreen)](https://github.com/badges/shields)
 [![IaC Tool](https://img.shields.io/badge/IaC-CloudFormation-orange?logo=amazon-aws)](https://aws.amazon.com/cloudformation/)
 [![Cloud Provider](https://img.shields.io/badge/Cloud-AWS-232F3E?logo=amazon-aws&logoColor=FF9900)](https://aws.amazon.com/)
 [![Back-end](https://img.shields.io/badge/Backend-Node.js%20%26%20Express-448833?logo=nodedotjs)](https://nodejs.org/)
