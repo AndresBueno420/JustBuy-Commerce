@@ -105,3 +105,47 @@ F_1 = 2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}
 ```
 Esta métrica es ideal para datasets con desbalance de clases, como el actual (donde clases como caminar son más frecuentes que girar). Al utilizar el promedio 'macro'14, se calcula el F1-Score para cada clase de forma independiente y luego se promedia, asegurando que el rendimiento en clases minoritarias tenga el mismo peso en la evaluación final que el de las clases mayoritarias.
 
+
+
+
+# 1. SVM (Support Vector Machine)
+
+- Implementado con `sklearn.svm.SVC` en un *pipeline* con `StandardScaler`.
+
+- El objetivo matemático del SVM es encontrar un hiperplano óptimo que maximice el margen (la distancia) entre los vectores de soporte de las diferentes clases en el espacio de características.
+
+- **Justificación de Hiperparámetros:**  
+  Dado que los datos pueden no ser linealmente separables, se exploraron diferentes *kernels*:
+
+  * **Lineal:**
+  
+    ```math
+    K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
+    ```
+
+  * **RBF (Base Radial):**
+  
+    ```math
+    K(\mathbf{x}_i, \mathbf{x}_j) = \exp(-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2)
+    ```
+
+    Este *kernel* mapea los datos a un espacio de mayor dimensión.  
+    El hiperparámetro $C$ (parámetro de regularización) se ajustó para controlar la penalización por clasificación incorrecta, gestionando así el balance entre un margen amplio y la minimización de los errores de entrenamiento.
+
+- Ajuste de hiperparámetros mediante `GridSearchCV` con validación cruzada (k=3).
+
+- Parámetros explorados: `C`, `kernel` (`linear`, `rbf`), `gamma`.
+
+---
+
+# 2. Random Forest
+
+- Modelo de ensamblado de árboles (`sklearn.ensemble.RandomForestClassifier`).
+
+- El modelo construye múltiples árboles de decisión (`n_estimators`) sobre subconjuntos aleatorios de las características.  
+  La decisión de división en cada nodo se optimiza minimizando una métrica de impureza, en este caso, el **Índice de Gini**:
+
+  ```math
+  Gini = 1 - \sum_{i=1}^{C} (p_i)^2
+  ```
+
