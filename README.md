@@ -69,7 +69,7 @@ The infrastructure is defined in the `cloudformation/` folder and follows best p
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
 ```
-        * **RBF (Base Radial):**
+   * **RBF (Base Radial):**
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \exp(-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2)
 ```
