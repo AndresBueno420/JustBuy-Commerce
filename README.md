@@ -6,8 +6,7 @@
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
 ```
-#Scalable E-commerce Deployment on AWS with IaC ```
-K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j ```
+#Scalable E-commerce Deployment on AWS with IaC ```math \mu```
 
 ## Project Overview
 
