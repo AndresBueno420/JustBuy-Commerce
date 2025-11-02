@@ -6,7 +6,7 @@
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
 ```
-#Scalable E-commerce Deployment on AWS with IaC $\mu$, $ z = \frac{x - \mu}{\sigma}$
+#Scalable E-commerce Deployment on AWS with IaC $\mu$, $\sigma$
 
 ## Project Overview
 
