@@ -63,16 +63,18 @@ The infrastructure is defined in the `cloudformation/` folder and follows best p
 
 1. **SVM (Support Vector Machine)**  
    - Implementado con `sklearn.svm.SVC` en un pipeline con `StandardScaler`.
-   - El objetivo matemático del SVM es encontrar un hiperplano óptimo que maximice el margen (la distancia) entre los vectores de soporte de las diferentes clases en el espacio de       características.Justificación de Hiperparámetros: Dado que los datos pueden no ser linealmente separables, se exploraron diferentes kernels :Lineal:
+   - El objetivo matemático del SVM es encontrar un hiperplano óptimo que maximice el margen (la distancia) entre los vectores de soporte de las diferentes clases en el espacio de       características.Justificación de Hiperparámetros: Dado que los datos pueden no ser linealmente separables, se exploraron diferentes kernels
+   - Lineal:
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
 ```
-   RBF (Base Radial):
+   - RBF (Base Radial):
 ```math
 K(\mathbf{x}_i, \mathbf{x}_j) = \exp(-\gamma \|\mathbf{x}_i - \mathbf{x}_j\|^2)
 ```
 
-   que mapea los datos a un espacio de mayor dimensión.El hiperparámetro  $C$ 7 (parámetro de regularización) se ajustó para controlar la penalización por clasificación incorrecta, gestionando así el balance entre un margen amplio y la minimización de los errores de entrenamiento.
+   que mapea los datos a un espacio de mayor dimensión.El hiperparámetro  $C$ 7 (parámetro de regularización)      se ajustó para controlar la penalización por clasificación incorrecta, gestionando así el balance entre un      margen amplio y la minimización de los errores de entrenamiento.
+   
    - Ajuste de hiperparámetros mediante `GridSearchCV` con validación cruzada (k=3).  
    - Parámetros explorados: `C`, `kernel` (`linear`, `rbf`), `gamma`.  
 
