@@ -5,6 +5,7 @@
 
 # Scalable E-commerce Deployment on AWS with IaC
 
+K(\mathbf{x}_i, \mathbf{x}_j) = \mathbf{x}_i^T \mathbf{x}_j
 ## Project Overview
 
 This project focuses on deploying a simulated **E-commerce Platform** on Amazon Web Services (**AWS**) using **Infrastructure as Code (IaC)** principles. We have leveraged **AWS CloudFormation** to build a secure, highly-available, and scalable three-tier architecture that can be deployed repeatedly and reliably.
