@@ -186,3 +186,43 @@ Esta métrica es ideal para datasets con desbalance de clases, como el actual (d
   donde \(p_i\) es la probabilidad de que una muestra en el nodo pertenezca a la clase \(i\).
 
 - Se exploraron también los hiperparámetros `max_depth` y `min_samples_split` para controlar la profundidad de los árboles y prevenir el sobreajuste.
+- --------------------
+-----------------
+
+1. **SVM (Support Vector Machine)**  
+- Implementado con `sklearn.svm.SVC` en un *pipeline* con `StandardScaler`.
+- El objetivo matemático del SVM es encontrar un hiperplano óptimo que maximice el margen (la distancia) entre los vectores de soporte de las diferentes clases en el espacio de características.
+
+- **Justificación de hiperparámetros:**  
+  Dado que los datos pueden no ser linealmente separables, se exploraron diferentes *kernels*:
+
+  - **Lineal:**
+
+    $$K(\mathbf{x}_i,\mathbf{x}_j)=\mathbf{x}_i^{\top}\mathbf{x}_j$$
+
+  - **RBF (Base Radial):**
+
+    $$K(\mathbf{x}_i,\mathbf{x}_j)=\exp\!\big(-\gamma \,\lVert \mathbf{x}_i-\mathbf{x}_j\rVert^{2}\big)$$
+
+    Este *kernel* mapea los datos a un espacio de mayor dimensión.  
+    El hiperparámetro \(C\) (parámetro de regularización) se ajustó para controlar la penalización por clasificación incorrecta, gestionando así el balance entre un margen amplio y la minimización de los errores de entrenamiento.
+
+- Ajuste de hiperparámetros mediante `GridSearchCV` con validación cruzada (k=3).  
+- Parámetros explorados: `C`, `kernel` (`linear`, `rbf`), `gamma`.
+2. **Random Forest**  
+   - Modelo de ensamblado de árboles (`sklearn.ensemble.RandomForestClassifier`).
+- El modelo construye múltiples árboles de decisión (`n_estimators`) sobre subconjuntos aleatorios de las características.  
+  La decisión de división en cada nodo se optimiza minimizando una métrica de impureza, en este caso, el **Índice de Gini**:
+
+  $$\mathrm{Gini}=1-\sum_{i=1}^{C} p_i^{\,2}$$
+
+  donde \(p_i\) es la probabilidad de que una muestra en el nodo pertenezca a la clase \(i\).
+
+- Se exploraron también los hiperparámetros `max_depth` y `min_samples_split` para controlar la profundidad de los árboles y prevenir el sobreajuste.
+- Ajuste con rejilla de hiperparámetros (`n_estimators`, `max_depth`, `min_samples_split`, `min_samples_leaf`). - Permite extraer **importancia de características**, útil para interpretación.
+
+3. **XGBoost**  
+   - Clasificador de gradiente optimizado (`xgboost.XGBClassifier`).
+   - A diferencia del RF, XGBoost construye árboles de forma secuencial. Cada nuevo árbol se entrena para corregir los errores residuales del modelo anterior, optimizando iterativamente el gradiente de una función de pérdida (como la log-loss para clasificación multiclase). 
+   - Parámetros: `max_depth`, `learning_rate`, `subsample`, `colsample_bytree`.  
+   - Entrenado con validación cruzada idéntica (cv=3, f1-weighted).  
