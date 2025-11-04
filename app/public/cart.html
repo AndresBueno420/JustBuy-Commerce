@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras | FC Store</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">FC STORE</a>
+            <nav class="nav-links">
+                <a href="index.html">Catálogo</a>
+                <a href="register.html">Registrarse</a>
+                <a href="login.html">Iniciar Sesión</a>
+                <a href="cart.html" title="Carrito de Compras">
+                    <span data-feather="shopping-bag" class="icon-feather"></span> 
+                    <span class="cart-icon">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 60px 20px;">
+        <h1 style="color: var(--color-dark-navy); font-size: 2.2rem; margin-bottom: 30px;">Tu Carrito de Compras</h1>
+
+        <div style="display: flex; gap: 40px; flex-wrap: wrap; align-items: flex-start;">
+            
+            <section id="cart-items-list" style="flex: 3; min-width: 450px; background-color: var(--color-white); padding: 20px; border-radius: 12px; border: 1px solid var(--color-light-blue);">
+                <div class="cart-item" style="display: flex; gap: 20px; padding: 20px 0; border-bottom: 1px solid var(--color-off-white);">
+                    <div style="width: 100px; height: 100px; background-color: var(--color-light-blue); border-radius: 8px;"></div>
+                    <div style="flex-grow: 1;">
+                        <h3 style="margin: 0; font-size: 1.1rem; color: var(--color-deep-blue);">Real Madrid - Local 23/24 (Talla L)</h3>
+                        <p style="color: var(--color-grey-blue); margin: 5px 0 10px;">Precio Unitario: $99.99</p>
+                        
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <label for="qty-1" style="font-size: 0.9rem;">Cantidad:</label>
+                            <input type="number" id="qty-1" value="1" min="1" style="width: 60px; padding: 5px; border: 1px solid var(--color-grey-blue); border-radius: 5px;">
+                            
+                            <button class="btn-remove" style="background: none; border: none; color: #E74C3C; cursor: pointer; font-size: 0.9rem; font-weight: 600;">
+                                <span data-feather="trash-2" class="icon-feather" style="width: 16px; height: 16px; margin-right: 0;"></span>
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--color-medium-blue); font-size: 1.2rem;">
+                        $99.99
+                    </div>
+                </div>
+                <p id="empty-cart-message" style="text-align: center; color: var(--color-grey-blue); padding: 50px 0; font-size: 1.1rem; display: none;">Tu carrito está vacío. ¡Añade algunas camisetas!</p>
+
+            </section>
+
+            <aside style="flex: 1; min-width: 300px; background-color: var(--color-white); padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);">
+                <h3 style="color: var(--color-dark-navy); margin-top: 0; border-bottom: 2px solid var(--color-light-blue); padding-bottom: 15px;">Resumen del Pedido</h3>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--color-dark-navy);">
+                    <span>Subtotal:</span>
+                    <span id="subtotal-amount" style="font-weight: 600;">$0.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; color: var(--color-dark-navy);">
+                    <span>Envío Estimado:</span>
+                    <span style="font-weight: 600;">$15.00</span>
+                </div>
+
+                <hr style="border: 1px solid var(--color-grey-blue); margin-top: 20px;">
+
+                <div style="display: flex; justify-content: space-between; margin: 20px 0; font-size: 1.5rem; color: var(--color-deep-blue);">
+                    <span style="font-weight: 700;">TOTAL:</span>
+                    <span id="total-amount" style="font-weight: 700;">$0.00</span>
+                </div>
+
+                <a href="checkout.html" class="btn-primary" style="display: block; text-align: center; padding: 15px; text-decoration: none; font-size: 1.1rem;">
+                    <span data-feather="credit-card" class="icon-feather"></span> 
+                    Proceder al Pago
+                </a>
+            </aside>
+        </div>
+    </main>
+
+    <footer style="background-color: var(--color-dark-navy); color: var(--color-light-blue); text-align: center; padding: 20px 0; margin-top: 40px;">
+        <p>&copy; 2025 FC Store. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script> feather.replace() </script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

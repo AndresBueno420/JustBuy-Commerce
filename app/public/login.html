@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Compra | FC Store</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">FC STORE</a>
+            <nav class="nav-links">
+                <a href="index.html">Catálogo</a>
+                <a href="register.html">Registrarse</a>
+                <a href="login.html">Iniciar Sesión</a>
+                <a href="cart.html" title="Carrito de Compras">
+                    <span data-feather="shopping-bag" class="icon-feather"></span> 
+                    <span class="cart-icon">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 100px 20px; text-align: center;">
+        
+        <div style="background-color: var(--color-white); padding: 50px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);">
+            
+            <span data-feather="check-circle" style="width: 80px; height: 80px; color: var(--color-medium-blue); margin-bottom: 20px;"></span>
+            
+            <h1 style="color: var(--color-dark-navy); font-size: 3rem; margin-bottom: 10px;">¡Gracias por tu Compra!</h1>
+            <p style="color: var(--color-deep-blue); font-size: 1.5rem; margin-bottom: 40px;">Tu pedido ha sido procesado exitosamente.</p>
+            
+            <p style="color: var(--color-grey-blue); font-size: 1.1rem; margin-bottom: 10px;">
+                Recibirás una confirmación por correo electrónico en breve.
+            </p>
+            <p style="font-weight: 600;">
+                Número de Pedido: <span id="order-id" style="color: var(--color-medium-blue);">#FC2025-123456</span>
+            </p>
+
+            <a href="index.html" class="btn-primary" style="display: inline-block; padding: 15px 30px; margin-top: 40px; text-decoration: none; font-size: 1.1rem;">
+                <span data-feather="home" class="icon-feather"></span> 
+                Volver al Catálogo
+            </a>
+        </div>
+    </main>
+
+    <footer style="background-color: var(--color-dark-navy); color: var(--color-light-blue); text-align: center; padding: 20px 0; margin-top: 40px;">
+        <p>&copy; 2025 FC Store. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script> feather.replace() </script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
