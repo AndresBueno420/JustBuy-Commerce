@@ -3,7 +3,7 @@
 [![Back-end](https://img.shields.io/badge/Backend-Node.js%20%26%20Express-448833?logo=nodedotjs)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-AWS%20RDS-527FFF?logo=amazon-aws)](https://aws.amazon.com/rds/)
 
-# Scalable E-commerce Deployment on AWS with IaC
+#Scalable E-commerce Deployment on AWS with IaC $\mu$, $\sigma$
 
 ## Project Overview
 
@@ -52,3 +52,9 @@ The infrastructure is defined in the `cloudformation/` folder and follows best p
 | **Database Layer** | Stores persistent application data. | AWS RDS (e.g., PostgreSQL/MySQL) in a Private Subnet. |
 | **Monitoring** | Tracks performance and sends alerts. | CloudWatch (Metrics & Alarms) and SNS (Notifications). |
 | **Secure Access** | Securely manages remote access to EC2. | Bastion Host, Session Manager. |
+
+
+
+-----
+
+
