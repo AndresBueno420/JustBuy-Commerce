@@ -42,7 +42,4 @@ const Product = sequelize.define('Product', {
     timestamps: true       // Sequelize añade campos 'createdAt' y 'updatedAt'
 });
 
-// Sincroniza el modelo con la base de datos (crea la tabla si no existe)
-Product.sync({ alter: true }); // Usamos 'alter: true' para modificar la tabla si ya existe sin perder datos
-
 module.exports = Product;

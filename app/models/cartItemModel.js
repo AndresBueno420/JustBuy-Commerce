@@ -28,6 +28,4 @@ User.belongsToMany(Product, { through: CartItem, foreignKey: 'userId' });
 // Un producto está en muchos carritos (ítems)
 Product.belongsToMany(User, { through: CartItem, foreignKey: 'productId' });
 
-CartItem.sync({ alter: true });
-
 module.exports = CartItem;

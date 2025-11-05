@@ -1,8 +1,9 @@
+const path = require('path');
 const { Sequelize } = require('sequelize');
 const dotenv = require('dotenv');
 
 // Cargar variables de entorno (asegúrate de que .env existe en la raíz /app)
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // =========================================================================
 // 1. Configuración de la Conexión a AWS RDS con Sequelize
@@ -20,14 +21,14 @@ const sequelize = new Sequelize(
         logging: false,            // Desactiva los logs SQL en la consola (opcional, pero recomendado en producción)
         
         // Configuraciones específicas para un entorno de nube (importante para el curso)
-        dialectOptions: {
-            ssl: {
-                require: true,
+        //dialectOptions: {
+            //ssl: {
+                //require: true,
                 // Si usas un certificado específico, se configuraría aquí. 
                 // Para AWS RDS estándar, a menudo puedes usar el valor por defecto o desactivar la verificación estricta:
-                rejectUnauthorized: false
-            }
-        },
+                //rejectUnauthorized: false
+            //}
+        //}, 
         pool: {
             max: 5,  // Máximo número de conexiones en el pool
             min: 0,  // Mínimo número de conexiones en el pool

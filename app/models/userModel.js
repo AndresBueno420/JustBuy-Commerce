@@ -42,7 +42,4 @@ const User = sequelize.define('User', {
     timestamps: true
 });
 
-// Sincroniza el modelo con la base de datos
-User.sync({ alter: true });
-
 module.exports = User;
