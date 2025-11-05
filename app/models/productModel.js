@@ -36,9 +36,6 @@ const Product = sequelize.define('Product', {
         type: DataTypes.STRING,
         allowNull: true
     },
-    // Talla (Aunque las tallas se manejan mejor en una tabla de variantes, 
-    // para el MVP lo simplificaremos en la descripción o en el nombre.)
-    // Pero si necesitas tallas específicas, crearíamos otro modelo.
 }, {
     // Opciones del modelo
     tableName: 'products', // Nombre real de la tabla en RDS

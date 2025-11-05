@@ -3,8 +3,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); // Importa la conexión a RDS
 
-// Se recomienda usar una librería de hashing como 'bcrypt' para las contraseñas
-// const bcrypt = require('bcrypt'); // (Necesitarías instalarla en package.json) 
 
 // Define el modelo "User"
 const User = sequelize.define('User', {
@@ -33,22 +31,16 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING, // Guardará el hash de la contraseña
         allowNull: false
     },
+    balance: {
+        type: DataTypes.DECIMAL(10, 2), // Formato para moneda (ej. 1000.00)
+        allowNull: false,
+        defaultValue: 300.00 // Asigna 300 dólares a los nuevos usuarios
+    }
+
 }, {
     tableName: 'users',
     timestamps: true
 });
-
-// ***************************************************************
-// Lógica de Seguridad (Hooks de Sequelize)
-// ***************************************************************
-/* Este código se ejecutaría ANTES de guardar el usuario y hashearía la contraseña.
-   Esto es crucial para cumplir con los principios de seguridad del proyecto.
-   
-User.beforeCreate(async (user) => {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-});
-*/
 
 // Sincroniza el modelo con la base de datos
 User.sync({ alter: true });
