@@ -1,11 +1,12 @@
 // app/controllers/authController.js
 
+const path = require('path');
 const User = require('../models/userModel'); // Importa el modelo de Usuario
 const bcrypt = require('bcryptjs');          // Importa librería para hashear contraseñas
 const jwt = require('jsonwebtoken');       // Importa librería para crear JSON Web Tokens (JWT)
 const dotenv = require('dotenv');          // Necesario para leer el secreto del JWT
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 exports.register = async (req, res) => {
     
