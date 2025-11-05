@@ -29,6 +29,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 // const productRoutes = require('./routes/productRoutes');
 // app.use('/api', productRoutes); 
 // EJEMPLO: Esto hará que la ruta sea http://localhost:3000/api/products
+const authRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+
+app.use('/api', authRoutes);
+app.use('/api', productRoutes);
+app.use('/api', cartRoutes);
 
 // Nota: Las rutas se agregarán en la siguiente fase.
 
