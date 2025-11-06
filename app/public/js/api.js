@@ -1,18 +1,9 @@
 // app/public/js/api.js
 
-/**
- * Objeto 'api' que centraliza todas las llamadas AJAX (jQuery) al Back-end.
- * Utiliza las funciones de global.js (como getAuthToken)
- */
 const api = {
-
     // ===================================
-    // AUTH API
+    // AUTH API (Sin cambios)
     // ===================================
-
-    /**
-     * Llama al Back-end para registrar un usuario.
-     */
     register: function(email, username, password) {
         return $.ajax({
             url: '/api/register',
@@ -21,10 +12,6 @@ const api = {
             data: JSON.stringify({ email, username, password })
         });
     },
-
-    /**
-     * Llama al Back-end para iniciar sesión.
-     */
     login: function(username, password) {
         return $.ajax({
             url: '/api/login',
@@ -35,27 +22,15 @@ const api = {
     },
 
     // ===================================
-    // CATALOG API
+    // CATALOG API (Sin cambios)
     // ===================================
-
-    /**
-     * Llama al Back-end para obtener productos (con o sin búsqueda).
-     */
     getProducts: function(query) {
         let apiUrl = '/api/products';
         if (query && query.trim() !== '') {
             apiUrl += `?q=${encodeURIComponent(query)}`;
         }
-        
-        return $.ajax({
-            url: apiUrl,
-            method: 'GET'
-        });
+        return $.ajax({ url: apiUrl, method: 'GET' });
     },
-
-    /**
-     * Llama al Back-end para obtener el detalle de un solo producto.
-     */
     getProductById: function(productId) {
         return $.ajax({
             url: `/api/products/${productId}`,
@@ -64,40 +39,28 @@ const api = {
     },
 
     // ===================================
-    // CART API
+    // CART API (¡AQUÍ ESTÁN LOS CAMBIOS!)
     // ===================================
 
-    /**
-     * Llama al Back-end para obtener los ítems del carrito de un usuario.
-     * Requiere autenticación (Token).
-     */
-    getCartItems: function(userId) {
+    getCartItems: function() { // <-- Ya no necesita 'userId'
         return $.ajax({
-            url: `/api/cart/${userId}`,
+            url: '/api/cart', // <-- ¡CAMBIO! URL actualizada
             method: 'GET',
             headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
     },
 
-    /**
-     * Llama al Back-end para añadir un producto al carrito.
-     * Requiere autenticación (Token).
-     */
-    addToCart: function(productId, userId, quantity) {
+    addToCart: function(productId, quantity) { // <-- Ya no necesita 'userId'
         return $.ajax({
             url: '/api/cart/add',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ productId, userId, quantity }),
+            data: JSON.stringify({ productId, quantity }), // <-- ¡CAMBIO! 'userId' eliminado
             headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
     },
 
-    /**
-     * Llama al Back-end para eliminar un ítem del carrito.
-     * Requiere autenticación (Token).
-     */
-    removeItem: function(itemId) {
+    removeItem: function(itemId) { // (Sin cambios, ya usaba itemId)
         return $.ajax({
             url: `/api/cart/remove/${itemId}`,
             method: 'DELETE',
@@ -105,16 +68,12 @@ const api = {
         });
     },
 
-    /**
-     * Llama al Back-end para procesar el pago (simulado).
-     * Requiere autenticación (Token).
-     */
-    checkout: function(userId) {
+    checkout: function() { // <-- Ya no necesita 'userId'
         return $.ajax({
             url: '/api/checkout',
             method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ userId }),
+            data: JSON.stringify({}), // <-- ¡CAMBIO! 'userId' eliminado (se envía objeto vacío)
             headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
     }

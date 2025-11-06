@@ -27,7 +27,7 @@ function getAuthToken() {
  * Debería llamarse en $(document).ready() en todas las páginas.
  */
 function updateCartCounter() {
-    const userId = getUserId();
+    const userId = getUserId(); // Lo usamos solo para saber si estamos logueados
     if (!userId) {
         $('.cart-icon').text('0');
         return;
@@ -35,7 +35,12 @@ function updateCartCounter() {
     
     // Hacemos una llamada rápida para contar los ítems
     $.ajax({
-        url: `/api/cart/${userId}`,
+        // ==========================================================
+        // ¡CORRECCIÓN!
+        // La URL ya no necesita el userId, porque el Back-end
+        // lo obtiene del token de autenticación (authMiddleware).
+        // ==========================================================
+        url: '/api/cart', // <-- RUTA CORREGIDA (antes era /api/cart/${userId})
         method: 'GET',
         headers: { 'Authorization': `Bearer ${getAuthToken()}` },
         success: function(items) {

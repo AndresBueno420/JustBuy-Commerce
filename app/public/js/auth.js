@@ -40,6 +40,7 @@ $(document).ready(function() {
                 $('#password').val()
             )
             .done(function(response) {
+                console.log("Respuesta del servidor al loguearse:", response);
                 localStorage.setItem('authToken', response.token);
                 localStorage.setItem('userId', response.userId); 
                 alert('¡Inicio de sesión exitoso!');

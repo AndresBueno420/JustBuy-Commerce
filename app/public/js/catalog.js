@@ -36,7 +36,6 @@ $(document).ready(function() {
             // Llama a la función de la API
             api.addToCart(
                 productId,
-                userId,
                 parseInt($('#quantity-input').val())
             )
             .done(function(response) {
@@ -64,14 +63,23 @@ function loadProductDetails(productId) {
     // Llama a la función de la API
     api.getProductById(productId)
         .done(function(product) {
+            // Cargar textos
             $('#product-name').text(product.name);
             $('#product-price').text(`$${product.price}`);
             $('#product-description').text(product.description);
+            
+            // ¡CORRECCIÓN! Cargar la imagen
+            const imageUrl = product.imageUrl || '/img/placeholder.jpg';
+            $('#main-image').html(
+                `<img src="${imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain;">`
+            );
         })
         .fail(() => $('#product-section').html('<h1>Producto no encontrado.</h1>'));
 }
 
-// renderProducts() se mantiene igual (no hace llamadas a la API)
+// ==========================================================
+// FUNCIÓN CORREGIDA
+// ==========================================================
 function renderProducts(products) {
     const productList = $('#product-list');
     productList.empty();
@@ -82,12 +90,24 @@ function renderProducts(products) {
     products.forEach(product => {
         productList.append(`
             <article class="product-card" onclick="window.location.href='product.html?id=${product.id}'">
-                <div class="product-image-placeholder">[Imagen]</div>
+                
+                <div class="product-image-placeholder" style="padding: 10px; height: 280px;">
+                    <img src="${product.imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                
                 <h3 class="product-title">${product.name}</h3>
+                
+                <p class="product-info" style="color: var(--color-grey-blue); padding: 0 15px;">
+                    ${product.description.substring(0, 50)}...
+                </p>
+                
                 <p class="product-price">$${product.price}</p>
+                
                 <button class="btn-primary"><span data-feather="plus-circle"></span> Añadir</button>
             </article>
         `);
     });
+    
+    // Volver a llamar a feather.replace() para que renderice los nuevos íconos
     feather.replace();
 }

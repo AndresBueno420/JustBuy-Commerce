@@ -3,25 +3,18 @@
 const express = require('express');
 const router = express.Router();
 const cartController = require('../controllers/cartController');
-// const authMiddleware = require('../middleware/authMiddleware'); // Se usaría aquí
+const authMiddleware = require('../middleware/authMiddleware'); // <-- 1. Importar el middleware
 
-// NOTA: Idealmente, todas las rutas de carrito estarían protegidas por authMiddleware
-// para asegurar que solo los usuarios logueados puedan modificarlas.
+// 2. Aplicar el 'authMiddleware' a todas las rutas del carrito
+// El middleware se ejecuta ANTES que el controlador
 
-// 1. Ruta para obtener los ítems del carrito de un usuario
-// Método: GET para obtener recursos
-router.get('/cart/:userId', cartController.getCartItems);
+// 3. ¡CAMBIO DE RUTA! Ya no se usa /cart/:userId, ahora es solo /cart
+router.get('/cart', authMiddleware, cartController.getCartItems);
 
-// 2. Ruta para añadir un producto al carrito
-// Método: POST para crear un nuevo ítem en la tabla CartItem
-router.post('/cart/add', cartController.addItemToCart);
+router.post('/cart/add', authMiddleware, cartController.addItemToCart);
 
-// 3. Ruta para eliminar un ítem del carrito
-// Método: DELETE para eliminar un recurso
-router.delete('/cart/remove/:itemId', cartController.removeItemFromCart);
+router.delete('/cart/remove/:itemId', authMiddleware, cartController.removeItemFromCart);
 
-// 4. Ruta para procesar la compra (Simulación de Proceso de Pago - checkout.html)
-// Método: POST para enviar la solicitud de pago y crear el recurso "Orden"
-router.post('/checkout', cartController.processCheckout);
+router.post('/checkout', authMiddleware, cartController.processCheckout);
 
 module.exports = router;
