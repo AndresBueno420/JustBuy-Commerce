@@ -24,34 +24,28 @@ function getAuthToken() {
 
 /**
  * Actualiza el contador del carrito en el header.
- * Debería llamarse en $(document).ready() en todas las páginas.
  */
 function updateCartCounter() {
-    const userId = getUserId(); // Lo usamos solo para saber si estamos logueados
+    const userId = getUserId();
     if (!userId) {
         $('.cart-icon').text('0');
         return;
     }
     
-    // Hacemos una llamada rápida para contar los ítems
-    $.ajax({
-        // ==========================================================
-        // ¡CORRECCIÓN!
-        // La URL ya no necesita el userId, porque el Back-end
-        // lo obtiene del token de autenticación (authMiddleware).
-        // ==========================================================
-        url: '/api/cart', // <-- RUTA CORREGIDA (antes era /api/cart/${userId})
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${getAuthToken()}` },
-        success: function(items) {
-            // Sumamos las cantidades de todos los ítems
+    // Usamos la API (api.js) que ya está corregida
+    api.getCartItems()
+        .done(function(response) { // 1. Cambiamos 'items' por 'response' para más claridad
+            
+            // 2. ¡CORRECCIÓN! Accedemos al array *dentro* del objeto de respuesta
+            const items = response.cartItems; 
+
+            // 3. Ahora 'items' SÍ es un array y .reduce() funcionará
             const count = items.reduce((sum, item) => sum + item.quantity, 0);
             $('.cart-icon').text(count);
-        },
-        error: function() {
+        })
+        .fail(function() {
             $('.cart-icon').text('0');
-        }
-    });
+        });
 }
 
 // Ejecutar funciones globales al cargar cualquier página

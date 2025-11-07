@@ -2,33 +2,49 @@
 
 const CartItem = require('../models/cartItemModel');
 const Product = require('../models/productModel');
-const User = require('../models/userModel');
+const User = require('../models/userModel'); // Asegúrate de que User esté importado
 const sequelize = require('../config/database');
 
-// 1. OBTENER ÍTEMS DEL CARRITO
+// ==========================================================
+// 1. OBTENER ÍTEMS DEL CARRITO (MODIFICADO)
+// ==========================================================
 exports.getCartItems = async (req, res) => {
     try {
-        // ¡CORRECCIÓN! Obtenemos el ID del usuario desde el token (inyectado por authMiddleware)
+        // Obtenemos el ID del usuario desde el token (inyectado por authMiddleware)
         const userId = req.user.id; 
 
+        // 1. Buscamos al usuario para obtener su balance
+        const user = await User.findByPk(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Usuario no encontrado." });
+        }
+
+        // 2. Buscamos los ítems del carrito (como antes)
         const cartItems = await CartItem.findAll({
             where: { userId: userId },
             include: [{
                 model: Product,
-                attributes: ['name', 'price', 'imageUrl']
+                attributes: ['name', 'price', 'imageUrl'] // Solo traemos los campos necesarios
             }]
         });
-        res.status(200).json(cartItems);
+
+        // 3. Devolvemos AMBOS: los ítems y el balance
+        res.status(200).json({
+            cartItems: cartItems,
+            userBalance: user.balance
+        });
+
     } catch (error) {
         console.error("Error al obtener carrito:", error);
-        res.status(500).json({ message: "Error interno del servidor." });
+        res.status(500).json({ message: "Error interno del servidor.", error: error.message });
     }
 };
 
-// 2. AÑADIR ÍTEM AL CARRITO
+// ==========================================================
+// 2. AÑADIR ÍTEM AL CARRITO (Sin cambios)
+// ==========================================================
 exports.addItemToCart = async (req, res) => {
     try {
-        // ¡CORRECCIÓN! El userId ya no viene del body
         const { productId, quantity } = req.body;
         const userId = req.user.id; // Lo tomamos del token
 
@@ -63,20 +79,20 @@ exports.addItemToCart = async (req, res) => {
     }
 };
 
-// 3. ELIMINAR ÍTEM (Esta función se mantiene casi igual, pero validamos el usuario)
+// ==========================================================
+// 3. ELIMINAR ÍTEM (Sin cambios)
+// ==========================================================
 exports.removeItemFromCart = async (req, res) => {
     try {
         const { itemId } = req.params;
-        const userId = req.user.id; // Obtenemos el ID del token
+        const userId = req.user.id;
 
         const item = await CartItem.findByPk(itemId);
         if (!item) {
             return res.status(404).json({ message: "Ítem no encontrado." });
         }
-
-        // ¡Seguridad extra! Asegurarse de que el ítem pertenezca al usuario del token
         if (item.userId !== userId) {
-            return res.status(403).json({ message: "Acción no autorizada." }); // 403 = Prohibido
+            return res.status(403).json({ message: "Acción no autorizada." });
         }
 
         await item.destroy();
@@ -87,11 +103,13 @@ exports.removeItemFromCart = async (req, res) => {
     }
 };
 
-// 4. PROCESAR PAGO
+
+// ==========================================================
+// 4. PROCESAR PAGO (Sin cambios, ya usaba el balance)
+// ==========================================================
 exports.processCheckout = async (req, res) => {
-    const t = await sequelize.transaction();
+    const t = await sequelize.transaction(); 
     try {
-        // ¡CORRECCIÓN! El userId ya no viene del body
         const userId = req.user.id; // Lo tomamos del token
 
         const user = await User.findByPk(userId, { transaction: t });
@@ -108,16 +126,20 @@ exports.processCheckout = async (req, res) => {
             return sum + (Number(item.quantity) * Number(item.price_at_purchase));
         }, 0);
 
-        if (Number(user.balance) < totalCost) {
+        // Agregamos el costo de envío fijo
+        const shippingCost = 15.00;
+        const finalTotalCost = totalCost + shippingCost;
+
+        if (Number(user.balance) < finalTotalCost) {
             await t.rollback();
             return res.status(402).json({
                 message: "Fondos insuficientes.",
-                totalCost: totalCost,
+                totalCost: finalTotalCost,
                 userBalance: user.balance
             });
         }
 
-        user.balance = Number(user.balance) - totalCost;
+        user.balance = Number(user.balance) - finalTotalCost;
         await user.save({ transaction: t });
 
         for (const item of cartItems) {
@@ -143,6 +165,6 @@ exports.processCheckout = async (req, res) => {
     } catch (error) {
         await t.rollback();
         console.error("Error durante el checkout:", error);
-        res.status(500).json({ message: "Error al procesar el pago." });
+        res.status(500).json({ message: "Error al procesar el pago.", error: error.message });
     }
 };
