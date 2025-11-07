@@ -4,6 +4,8 @@ const CartItem = require('../models/cartItemModel');
 const Product = require('../models/productModel');
 const User = require('../models/userModel'); // Asegúrate de que User esté importado
 const sequelize = require('../config/database');
+const Order = require('../models/orderModel');
+const OrderItem = require('../models/orderItemModel');
 
 // ==========================================================
 // 1. OBTENER ÍTEMS DEL CARRITO (MODIFICADO)
@@ -104,13 +106,13 @@ exports.removeItemFromCart = async (req, res) => {
 };
 
 
-// ==========================================================
-// 4. PROCESAR PAGO (Sin cambios, ya usaba el balance)
-// ==========================================================
 exports.processCheckout = async (req, res) => {
     const t = await sequelize.transaction(); 
     try {
-        const userId = req.user.id; // Lo tomamos del token
+        const userId = req.user.id;
+        
+        // (Opcional) Obtener la dirección del body
+        const { address } = req.body; 
 
         const user = await User.findByPk(userId, { transaction: t });
         const cartItems = await CartItem.findAll({
@@ -122,14 +124,14 @@ exports.processCheckout = async (req, res) => {
             return res.status(400).json({ message: "El carrito está vacío." });
         }
 
-        const totalCost = cartItems.reduce((sum, item) => {
+        const subtotal = cartItems.reduce((sum, item) => {
             return sum + (Number(item.quantity) * Number(item.price_at_purchase));
         }, 0);
 
-        // Agregamos el costo de envío fijo
-        const shippingCost = 15.00;
-        const finalTotalCost = totalCost + shippingCost;
+        const shippingCost = 15.00; // Envío fijo
+        const finalTotalCost = subtotal + shippingCost;
 
+        // 1. Verificar fondos (como antes)
         if (Number(user.balance) < finalTotalCost) {
             await t.rollback();
             return res.status(402).json({
@@ -139,9 +141,31 @@ exports.processCheckout = async (req, res) => {
             });
         }
 
+        // 2. Deducir balance (como antes)
         user.balance = Number(user.balance) - finalTotalCost;
         await user.save({ transaction: t });
 
+        // 3. ¡NUEVO! Crear el registro de la Orden
+        const newOrder = await Order.create({
+            userId: userId,
+            totalAmount: finalTotalCost,
+            shippingAddress: address // Guardamos la dirección
+        }, { transaction: t });
+
+        // 4. ¡NUEVO! Mapear CartItems a OrderItems
+        const orderItemsData = cartItems.map(cartItem => {
+            return {
+                orderId: newOrder.id,
+                productId: cartItem.productId,
+                quantity: cartItem.quantity,
+                price_at_purchase: cartItem.price_at_purchase
+            };
+        });
+
+        // 5. ¡NUEVO! Guardar los ítems de la orden
+        await OrderItem.bulkCreate(orderItemsData, { transaction: t });
+
+        // 6. Actualizar stock (como antes)
         for (const item of cartItems) {
             const product = await Product.findByPk(item.productId, { transaction: t });
             if (product.stock < item.quantity) {
@@ -151,15 +175,17 @@ exports.processCheckout = async (req, res) => {
             await product.save({ transaction: t });
         }
 
+        // 7. Vaciar el carrito (como antes)
         await CartItem.destroy({
             where: { userId: userId },
             transaction: t
         });
 
+        // 8. Commit
         await t.commit();
         res.status(200).json({ 
             message: "¡Compra exitosa! Créditos deducidos.",
-            orderId: `FC2025-${Date.now()}`,
+            orderId: newOrder.id, // Enviar el nuevo ID de la orden
             newBalance: user.balance
         });
     } catch (error) {

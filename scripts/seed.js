@@ -3,10 +3,12 @@
 const sequelize = require('../app/config/database'); 
 
 // 1. IMPORTAR TODOS LOS MODELOS
-// Necesitamos importar todos los modelos para que sequelize.sync() conozca toda la estructura.
+// (Importamos todos para que sequelize.sync() los conozca)
 require('../app/models/userModel'); 
 const Product = require('../app/models/productModel'); 
 require('../app/models/cartItemModel');
+require('../app/models/orderModel');     // <-- ¡AÑADIR ESTA LÍNEA!
+require('../app/models/orderItemModel'); // <-- ¡AÑADIR ESTA LÍNEA!
 
 // --- DATOS DE EJEMPLO DE CAMISETAS ---
 const productsToSeed = [
@@ -49,9 +51,7 @@ const seedDatabase = async () => {
         await sequelize.authenticate();
         console.log('Conexión a la base de datos establecida exitosamente.');
 
-        // 2. Sincronizar TODOS los modelos
-        // Usamos { force: true } para borrar y recrear TODAS las tablas (User, Product, CartItem)
-        // Esto es destructivo, pero es lo que se espera de un script de "seeding".
+        // 2. Sincronizar TODOS los modelos (Ahora incluirá Orders y OrderItems)
         console.log('Sincronizando todos los modelos (force: true)...');
         await sequelize.sync({ force: true }); 
         console.log('Todas las tablas han sido recreadas.');

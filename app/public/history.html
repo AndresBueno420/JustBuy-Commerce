@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Pedidos | FC Store</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .order-card {
+            background-color: var(--color-white);
+            border: 1px solid var(--color-light-blue);
+            border-radius: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .order-header {
+            background-color: var(--color-off-white);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            color: var(--color-grey-blue);
+            border-bottom: 1px solid var(--color-light-blue);
+        }
+        .order-body { padding: 25px; }
+        .order-item { display: flex; gap: 15px; margin-bottom: 15px; }
+        .order-item img { width: 60px; height: 60px; object-fit: contain; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="container nav-content">
+            <a href="index.html" class="logo">FC STORE</a>
+            <nav class="nav-links">
+                <a href="index.html">Catálogo</a>
+                <a href="history.html">Mis Pedidos</a> <a href="register.html">Registrarse</a>
+                <a href="login.html">Iniciar Sesión</a>
+                <a href="cart.html" title="Carrito de Compras">
+                    <span data-feather="shopping-bag" class="icon-feather"></span> 
+                    <span class="cart-icon">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 60px 20px;">
+        <h1 style="color: var(--color-dark-navy); font-size: 2.2rem; margin-bottom: 30px;">Historial de Pedidos</h1>
+        
+        <div id="order-history-list">
+            <p>Cargando historial...</p>
+        </div>
+    </main>
+
+    <footer style="background-color: var(--color-dark-navy); color: var(--color-light-blue); text-align: center; padding: 20px 0; margin-top: 40px;">
+        <p>&copy; 2025 FC Store. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script> feather.replace() </script>
+    <script src="js/global.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/history.js"></script>
+</body>
+</html>

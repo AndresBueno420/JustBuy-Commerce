@@ -76,5 +76,14 @@ const api = {
             data: JSON.stringify({}), // <-- ¡CAMBIO! 'userId' eliminado (se envía objeto vacío)
             headers: { 'Authorization': `Bearer ${getAuthToken()}` }
         });
+    },
+
+    getOrderHistory: function() {
+        return $.ajax({
+            url: '/api/orders',
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${getAuthToken()}` }
+        });
     }
+
 };
