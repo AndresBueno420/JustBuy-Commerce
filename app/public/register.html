@@ -1,109 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario | FC Store</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <style>
-        /* Reutiliza los estilos de formulario del login */
-        .auth-container {
-            max-width: 400px;
-            margin: 60px auto;
-            padding: 40px;
-            background-color: var(--color-white);
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(11, 36, 71, 0.1);
-            border: 1px solid var(--color-light-blue);
-        }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: 600; 
-            color: var(--color-deep-blue); 
-        }
-        .form-group input {
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 25px; 
-            border: 1px solid var(--color-light-blue);
-            border-radius: 8px; 
-            font-size: 1rem; 
-            box-sizing: border-box;
-        }
-        .form-group input:focus { 
-            border-color: var(--color-medium-blue); 
-            outline: none; 
-            box-shadow: 0 0 0 3px rgba(39, 102, 165, 0.2);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>E-commerce - Registro</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
-    <header class="header">
-        <div class="container nav-content">
-            <a href="index.html" class="logo">FC STORE</a>
-            <nav class="nav-links">
-                <a href="index.html">Catálogo</a>
-                <a href="register.html">Registrarse</a>
-                <a href="login.html">Iniciar Sesión</a>
-                <a href="cart.html" title="Carrito de Compras">
-                    <span data-feather="shopping-bag" class="icon-feather"></span> 
-                    <span class="cart-icon">0</span>
-                </a>
-            </nav>
+  <div class="container form-container">
+    <div class="form-box">
+      <h2>Crear Cuenta</h2>
+      <form id="register-form">
+        <div>
+          <label for="register-email">Correo electrónico</label>
+          <input type="email" id="register-email" required>
         </div>
-    </header>
-
-    <main class="container">
-        <div class="auth-container">
-            <h1 style="color: var(--color-dark-navy); font-size: 2rem; text-align: center; margin-bottom: 30px;">
-                Crea tu Cuenta
-            </h1>
-
-            <form id="register-form">
-                <div class="form-group">
-                    <label for="new-email">Correo Electrónico</label>
-                    <input type="email" id="new-email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-username">Nombre de Usuario</label>
-                    <input type="text" id="new-username" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="new-password">Contraseña</label>
-                    <input type="password" id="new-password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirm-password">Confirmar Contraseña</label>
-                    <input type="password" id="confirm-password" required>
-                </div>
-
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 10px;">
-                    <span data-feather="user-plus" class="icon-feather"></span> 
-                    Registrarse
-                </button>
-            </form>
-
-            <p style="text-align: center; margin-top: 30px; color: var(--color-grey-blue);">
-                ¿Ya tienes una cuenta? 
-                <a href="login.html" style="color: var(--color-medium-blue); text-decoration: none; font-weight: 600;">Inicia Sesión</a>
-            </p>
+        <div>
+          <label for="register-password">Contraseña</label>
+          <input type="password" id="register-password" required>
         </div>
-    </main>
+        <button type="submit">Registrarse</button>
+      </form>
+      <div class="form-link">
+        <p>¿Ya tienes una cuenta? <a href="/login.html">Inicia sesión</a></p>
+      </div>
+    </div>
+  </div>
 
-    <footer style="background-color: var(--color-dark-navy); color: var(--color-light-blue); text-align: center; padding: 20px 0; margin-top: 40px;">
-        <p>&copy; 2025 FC Store. Todos los derechos reservados.</p>
-    </footer>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script> feather.replace() </script>
-    <script src="js/api.js"></script>
-    <script src="js/global.js"></script>
-    <script src="js/auth.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/js/app.js"></script>
 </body>
 </html>

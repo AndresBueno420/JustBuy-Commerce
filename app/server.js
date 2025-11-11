@@ -1,63 +1,68 @@
-// server.js
-
 const express = require('express');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+const session = require('express-session');
 const path = require('path');
+// sequelize ya no se importa de config, sino de models/index.js
+const { sequelize } = require('./src/models'); 
+require('dotenv').config();
 
-// Cargar variables de entorno desde .env (para DB y Puertos)
-dotenv.config();
+// --- IMPORTAR RUTAS ---
+const authRoutes = require('./src/routes/auth');
+const productRoutes = require('./src/routes/product'); // <--- AÑADIR
+const cartRoutes = require('./src/routes/cart');       // <--- AÑADIR
+const paymentRoutes = require('./src/routes/payment');
+const { isAuthenticated } = require('./src/middleware/auth');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware para parsear cuerpos de solicitud JSON
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// --- Configuración de Middleware ---
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.static(path.join(__dirname, 'public'))); 
 
-// ----------------------------------------------------
-// 1. Servir Archivos Estáticos (EL FRONT-END)
-// Express sirve todos los archivos de la carpeta 'public'
-// Esto permite que el navegador acceda a index.html, styles.css, etc.
-// ----------------------------------------------------
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } 
+}));
 
-// ----------------------------------------------------
-// 2. Importar Rutas de la API
-// Aquí se conectarán nuestros endpoints (productRoutes, authRoutes)
-// ----------------------------------------------------
-// const productRoutes = require('./routes/productRoutes');
-// app.use('/api', productRoutes); 
-// EJEMPLO: Esto hará que la ruta sea http://localhost:3000/api/products
-const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const orderRoutes = require('./routes/orderRoutes');
-
-app.use('/api', authRoutes);
-app.use('/api', productRoutes);
-app.use('/api', cartRoutes);
-app.use('/api', orderRoutes);
-
-// Nota: Las rutas se agregarán en la siguiente fase.
-
-// ----------------------------------------------------
-// 3. Prueba de Conexión a la Base de Datos (RDS)
-// ----------------------------------------------------
-const sequelize = require('./config/database'); 
-sequelize.authenticate()
-  .then(() => console.log('Conexión a AWS RDS establecida exitosamente.'))
-  .catch(err => console.error('Error al conectar a AWS RDS:', err.message));
+// --- USAR RUTAS ---
+app.use('/auth', authRoutes); 
+app.use('/api', productRoutes); // <--- AÑADIR
+app.use('/api', cartRoutes);    // <--- AÑADIR
+app.use('/api', paymentRoutes);
+// (Usaremos las rutas /api en Fase 3)
+// const productRoutes = require('./src/routes/product');
+// const cartRoutes = require('./src/routes/cart');
+// const { isAuthenticated } = require('./src/middleware/auth');
+//
+// app.use('/api', isAuthenticated, productRoutes);
+// app.use('/api', isAuthenticated, cartRoutes);
 
 
-// ----------------------------------------------------
-// 4. Iniciar el Servidor
-// ----------------------------------------------------
-app.listen(PORT, () => {
-  console.log(`\nServidor Express corriendo en http://localhost:${PORT}`);
-  console.log(`Accede al Front-end en: http://localhost:${PORT}/index.html`);
-  console.log('\n¡Listo para la implementación IaC en AWS!\n');
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Exportar 'app' para pruebas (opcional)
-module.exports = app;
+// --- Arranque del Servidor ---
+async function startServer() {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ Conexión a Postgres establecida exitosamente.');
+    
+    // --- SINCRONIZAR MODELOS ---
+    // Usamos { alter: true } para actualizar tablas sin borrar datos (más seguro que 'force: true')
+    await sequelize.sync({ alter: true }); 
+    console.log('✅ Modelos (User, Product, Cart, CartItem) sincronizados.');
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Error al conectar o sincronizar la base de datos:', error);
+  }
+}
+
+startServer();

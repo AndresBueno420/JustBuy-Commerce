@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Carrito de Compras</title>
+  <title>Catálogo de Productos</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -10,26 +10,18 @@
   <nav class="navbar">
     <div class="navbar-content">
       <h2>Mi E-commerce</h2>
-      <div class="navbar-links">
-        <a href="/catalog.html">Volver al Catálogo</a>
-        <a href="/history.html">Historial</a>
+      <div class="navbar-links"> 
+        <a href="/cart.html">Ver Carrito</a>
+        <a href="/history.html">Historial</a> 
         <button id="logout-btn">Cerrar Sesión</button>
       </div>
     </div>
   </nav>
 
   <div class="container">
-    <h1>Tu Carrito de Compras</h1>
-    
-    <div id="cart-items-list">
+    <h1>Catálogo de Productos</h1>
+    <div id="product-list">
       </div>
-    
-    <div id="cart-summary">
-      <div id="cart-total">
-        Total: $0.00
-      </div>
-      <button id="payment-btn">Proceder al Pago</button>
-    </div>
   </div>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
