@@ -52,7 +52,7 @@ exports.createPreference = async (req, res) => {
       quantity: Number(item.quantity),
     }));
 
-    const host = 'http://localhost:3000'; // El front sigue en localhost
+    const host = req.protocol + '://' + req.get('host'); // El front sigue en localhost
 
     const preferenceData = {
       items: preferenceItems,
@@ -66,7 +66,7 @@ exports.createPreference = async (req, res) => {
       external_reference: order.id.toString(), 
       
       // La URL del webhook que nos dio ngrok
-      notification_url: `https://d3ffa860181d.ngrok-free.app/api/payment/webhook` 
+      notification_url: `${host}/api/payment/webhook` 
     };
 
     const preference = new Preference(client);
