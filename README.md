@@ -3,7 +3,7 @@
 [![Back-end](https://img.shields.io/badge/Backend-Node.js%20%26%20Express-448833?logo=nodedotjs)](https://nodejs.org/)
 [![Database](https://img.shields.io/badge/Database-AWS%20RDS-527FFF?logo=amazon-aws)](https://aws.amazon.com/rds/)
 
-#Scalable E-commerce Deployment on AWS with IaC $\mu$, $\sigma$
+#Scalable E-commerce Deployment on AWS with IaC 
 
 ## Project Overview
 
