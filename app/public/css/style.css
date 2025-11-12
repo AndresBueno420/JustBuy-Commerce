@@ -1,0 +1,252 @@
+/* -- Paleta de Azules -- */
+:root {
+  --color-claro: #E5F0FA;      /* Fondo */
+  --color-medio-claro: #D1E8FC; /* Sombra sutil */
+  --color-medio: #BDE0FE;       /* Bordes */
+  --color-principal: #A2D2FF;    /* Botones, acentos */
+  --color-oscuro: #8FC9FF;      /* Hover de botones */
+
+  --color-blanco: #FFFFFF;
+  --color-texto: #0B2545;       /* Un azul oscuro para texto legible */
+  --color-sombra: rgba(11, 37, 69, 0.1); /* Sombra suave */
+}
+
+/* -- Estilos Generales -- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--color-claro);
+  color: var(--color-texto);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 2.5rem;
+  background-color: var(--color-blanco);
+  border-radius: 20px; /* Bordes curvos */
+  box-shadow: 0 10px 30px var(--color-sombra);
+}
+
+h1, h2 {
+  color: var(--color-texto);
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* -- Formularios (Login/Registro) -- */
+.form-container {
+  max-width: 450px;
+  margin: 0 auto;
+}
+
+.form-box {
+  background-color: var(--color-claro);
+  padding: 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-medio);
+}
+
+.form-box div {
+  margin-bottom: 1rem;
+}
+
+.form-box label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--color-medio);
+  border-radius: 8px;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho */
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--color-principal);
+  box-shadow: 0 0 5px var(--color-medio-claro);
+}
+
+button {
+  width: 100%;
+  background-color: var(--color-principal);
+  color: var(--color-texto);
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--color-oscuro);
+}
+
+.form-link {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.form-link a {
+  color: var(--color-principal);
+  font-weight: 500;
+  text-decoration: none;
+}
+.form-link a:hover {
+  text-decoration: underline;
+}
+
+/* -- Navbar (Catálogo/Carrito) -- */
+.navbar {
+  width: 100%;
+  background-color: var(--color-blanco);
+  box-shadow: 0 4px 12px var(--color-sombra);
+  padding: 1rem 2rem; /* Padding vertical y un poco horizontal por si acaso */
+  box-sizing: border-box;
+}
+
+/* NUEVA CLASE: Para centrar el contenido del navbar */
+.navbar-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto; /* Centra este div */
+}
+
+.navbar h2 {
+  margin: 0;
+}
+
+.navbar-links a {
+  color: var(--color-texto);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  background-color: var(--color-claro);
+}
+
+#logout-btn {
+  width: auto;
+  background-color: #dc3545; /* Rojo para logout */
+  color: var(--color-blanco);
+}
+#logout-btn:hover {
+  background-color: #c82333;
+}
+
+/* -- Catálogo de Productos -- */
+#product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.product-card {
+  background-color: var(--color-blanco);
+  border: 1px solid var(--color-medio);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px var(--color-sombra);
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px var(--color-sombra);
+}
+
+.product-card img {
+  max-width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.product-card h3 {
+  font-size: 1.2em;
+  margin-bottom: 0.5rem;
+}
+
+.product-card .price {
+  color: #0B2545;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+}
+
+/* -- Carrito de Compras -- */
+.cart-item {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background-color: var(--color-claro);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.cart-item img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 1.5rem;
+}
+
+.cart-item-details {
+  flex-grow: 1;
+}
+
+.cart-item-details strong {
+  font-size: 1.1em;
+}
+
+.remove-from-cart-btn {
+  width: auto;
+  background-color: #dc3545;
+  color: var(--color-blanco);
+}
+
+#cart-summary {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--color-claro);
+  border-radius: 12px;
+}
+
+#cart-total {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: right;
+}
+
+#payment-btn {
+  width: 100%;
+  margin-top: 1rem;
+  background-color: #28a745; /* Verde para Pagar */
+  color: var(--color-blanco);
+  font-size: 1.2rem;
+}
+#payment-btn:hover {
+  background-color: #218838;
+}
