@@ -1,0 +1,256 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  (3/3) Aplicación: ALB, Target Group, Listener, Launch Template,
+  Auto Scaling Group, política de scaling y SNS con alarma de CPU.
+
+Parameters:
+  # Generales
+  KeyName:
+    Description: 'Tu Key Pair de EC2 (control.pem)'
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: 'control'
+
+  InstanceRoleName:
+    Description: 'El Perfil de Instancia de IAM (encontrado en tu sandbox)'
+    Type: String
+    Default: 'myS3Role'
+
+  GitRepoURL:
+    Description: 'La URL HTTPS de tu repositorio Git'
+    Type: String
+    Default: 'https://github.com/tu-usuario/JustBuy-Commerce.git'
+
+  AmiId:
+    Description: 'AMI de Amazon Linux 2 para us-east-1'
+    Type: 'AWS::EC2::Image::Id'
+    Default: 'ami-03c870feb7c37e4ff'
+
+  # Red
+  VpcId:
+    Description: 'ID de la VPC (de la stack de red)'
+    Type: 'AWS::EC2::VPC::Id'
+
+  PublicSubnetAId:
+    Description: 'Subred pública A (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  PublicSubnetBId:
+    Description: 'Subred pública B (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  PrivateSubnetAId:
+    Description: 'Subred privada A (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  PrivateSubnetBId:
+    Description: 'Subred privada B (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  AppSecurityGroupId:
+    Description: 'Security Group de la App (de la stack de red)'
+    Type: 'AWS::EC2::SecurityGroup::Id'
+
+  # Secrets / App
+  SessionSecret:
+    Description: 'Secreto para express-session'
+    Type: String
+    NoEcho: true
+  
+  MPAccessToken:
+    Description: 'Tu Access Token de Mercado Pago'
+    Type: String
+    NoEcho: true
+
+  # DB (deben coincidir con la stack de DB)
+  DBName:
+    Description: 'Nombre de la base de datos (igual a la stack de DB)'
+    Type: String
+    Default: 'ecommerce_db'
+  
+  DBUser:
+    Description: 'Usuario maestro de la base de datos (igual a la stack de DB)'
+    Type: String
+    Default: 'postgres'
+
+  DBPassword:
+    Description: 'Contraseña de la base de datos (igual a la stack de DB)'
+    Type: String
+    NoEcho: true
+
+  DBHost:
+    Description: 'Endpoint de la DB (DBEndpointAddress de la stack de DB)'
+    Type: String
+
+  DBPort:
+    Description: 'Puerto de la DB (DBEndpointPort de la stack de DB)'
+    Type: String
+    Default: '5432'
+
+  # SNS
+  NotificationEmail:
+    Description: 'Correo donde SNS enviará alertas'
+    Type: String
+
+Resources:
+  # --- ALB ---
+  AppLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Name: 'Project-ALB-Final'
+      Subnets:
+        - !Ref PublicSubnetAId
+        - !Ref PublicSubnetBId
+      SecurityGroups:
+        - !Ref AppSecurityGroupId
+      Scheme: 'internet-facing'
+      Tags:
+        - Key: Name
+          Value: 'Project-ALB-Final'
+
+  ALBTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      Name: 'Project-TG-App-Final'
+      VpcId: !Ref VpcId
+      Protocol: 'HTTP'
+      Port: 3000
+      HealthCheckPath: '/login.html'
+      HealthCheckIntervalSeconds: 30
+      TargetType: 'instance'
+
+  ALBListener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      LoadBalancerArn: !Ref AppLoadBalancer
+      Protocol: 'HTTP'
+      Port: 80
+      DefaultActions:
+        - Type: 'forward'
+          TargetGroupArn: !Ref ALBTargetGroup
+
+  # --- Launch Template ---
+  AppLaunchTemplate:
+    Type: 'AWS::EC2::LaunchTemplate'
+    Properties:
+      LaunchTemplateName: 'Project-Launch-Template-Final'
+      LaunchTemplateData:
+        InstanceType: 't2.micro'
+        ImageId: !Ref AmiId
+        KeyName: !Ref KeyName
+        SecurityGroupIds:
+          - !Ref AppSecurityGroupId
+        IamInstanceProfile:
+          Name: !Ref InstanceRoleName
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y git
+            yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+            systemctl enable amazon-ssm-agent
+            systemctl start amazon-ssm-agent
+            su - ec2-user -c "
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+              . /home/ec2-user/.nvm/nvm.sh
+              nvm install 18
+              npm install -g pm2
+            "
+            cd /home/ec2-user
+            git clone https://github.com/AndresBueno420/JustBuy-Commerce.git
+            APP_PATH="/home/ec2-user/JustBuy-Commerce/app"
+            cd $APP_PATH
+            echo "NODE_ENV=production" > .env
+            echo "PORT=3000" >> .env
+            echo "DB_HOST=${DBHost}" >> .env
+            echo "DB_PORT=${DBPort}" >> .env
+            echo "DB_NAME=${DBName}" >> .env
+            echo "DB_USER=${DBUser}" >> .env
+            echo "DB_PASS=${DBPassword}" >> .env
+            echo "SESSION_SECRET=${SessionSecret}" >> .env
+            echo "MERCADOPAGO_ACCESS_TOKEN=${MPAccessToken}" >> .env
+            chown -R ec2-user:ec2-user /home/ec2-user/JustBuy-Commerce
+            su - ec2-user -c "cd $APP_PATH && npm install"
+            
+            su - ec2-user -c "
+              . /home/ec2-user/.nvm/nvm.sh
+              cd $APP_PATH
+              npm run seed
+            "
+
+            su - ec2-user -c "
+              . /home/ec2-user/.nvm/nvm.sh
+              cd $APP_PATH
+              pm2 start $APP_PATH/server.js -n \"ecommerce-app\"
+              pm2 startup
+              pm2 save
+            "
+
+  # --- Auto Scaling Group ---
+  AppAutoScalingGroup:
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnetAId
+        - !Ref PrivateSubnetBId
+      LaunchTemplate:
+        LaunchTemplateId: !Ref AppLaunchTemplate
+        Version: !GetAtt AppLaunchTemplate.LatestVersionNumber
+      MinSize: '1'
+      MaxSize: '3'
+      DesiredCapacity: '1'
+      TargetGroupARNs:
+        - !Ref ALBTargetGroup
+      Tags:
+        - Key: Name
+          Value: 'Project-EC2-App-Final'
+          PropagateAtLaunch: true
+
+  ScaleUpPolicy:
+    Type: 'AWS::AutoScaling::ScalingPolicy'
+    Properties:
+      AutoScalingGroupName: !Ref AppAutoScalingGroup
+      PolicyType: 'TargetTrackingScaling'
+      TargetTrackingConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: 'ASGAverageCPUUtilization'
+        TargetValue: 20.0
+
+  # --- SNS + Alarma ---
+  NotificationTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: 'Project-App-Notifications'
+      TopicName: 'project-app-notifications'
+
+  NotificationSubscription:
+    Type: 'AWS::SNS::Subscription'
+    Properties:
+      Protocol: email
+      Endpoint: !Ref NotificationEmail
+      TopicArn: !Ref NotificationTopic
+
+  HighCPUAlarm:
+    Type: 'AWS::CloudWatch::Alarm'
+    Properties:
+      AlarmDescription: 'Alarma de CPU alta para el Auto Scaling Group'
+      Namespace: 'AWS/EC2'
+      MetricName: 'CPUUtilization'
+      Dimensions:
+        - Name: AutoScalingGroupName
+          Value: !Ref AppAutoScalingGroup
+      Statistic: Average
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref NotificationTopic
+
+Outputs:
+  LoadBalancerURL:
+    Description: 'The public URL for your E-Commerce application'
+    Value: !GetAtt AppLoadBalancer.DNSName
+
+  SnsTopicArn:
+    Description: 'ARN del SNS Topic de notificaciones'
+    Value: !Ref NotificationTopic

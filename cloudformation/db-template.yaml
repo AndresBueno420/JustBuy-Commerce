@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  (2/3) Base de datos RDS PostgreSQL usando subredes privadas y SG de DB.
+
+Parameters:
+  DBName:
+    Description: 'Nombre de la base de datos'
+    Type: String
+    Default: 'ecommerce_db'
+  
+  DBUser:
+    Description: 'Usuario maestro de la base de datos'
+    Type: String
+    Default: 'postgres'
+
+  DBPassword:
+    Description: 'Contraseña maestra de la base de datos'
+    Type: String
+    NoEcho: true
+
+  PrivateSubnetAId:
+    Description: 'Subred privada A (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  PrivateSubnetBId:
+    Description: 'Subred privada B (de la stack de red)'
+    Type: 'AWS::EC2::Subnet::Id'
+
+  DBSecurityGroupId:
+    Description: 'Security Group de la DB (de la stack de red)'
+    Type: 'AWS::EC2::SecurityGroup::Id'
+
+Resources:
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: 'Subnet group for RDS (usando subredes privadas)'
+      SubnetIds:
+        - !Ref PrivateSubnetAId
+        - !Ref PrivateSubnetBId
+      Tags:
+        - Key: Name
+          Value: 'Project-RDS-SubnetGroup-Final'
+
+  RDSInstance:
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      Engine: 'postgres'
+      EngineVersion: '15'
+      DBInstanceClass: 'db.t3.micro'
+      MultiAZ: false
+      AllocatedStorage: '20'
+      StorageType: 'gp2'
+      MonitoringInterval: 0
+      DBName: !Ref DBName
+      MasterUsername: !Ref DBUser
+      MasterUserPassword: !Ref DBPassword
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroupId
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 0
+      Tags:
+        - Key: Name
+          Value: 'Project-RDS-Instance-Final'
+
+Outputs:
+  DBEndpointAddress:
+    Description: 'Endpoint (host) de la base de datos'
+    Value: !GetAtt RDSInstance.Endpoint.Address
+
+  DBEndpointPort:
+    Description: 'Puerto de la base de datos'
+    Value: !GetAtt RDSInstance.Endpoint.Port
