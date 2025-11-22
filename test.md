@@ -1,247 +1,289 @@
-# Manual de Usuario  
-## Sistema de Reconocimiento de Actividades en Video (Video Activity Recognition)
+# **Entrega 3 - Sistema de Reconocimiento de Actividades en Video (Video Activity Recognition)**
 
----
+### **Selección de Características, Modelo Final SVM Reducido y Despliegue en Tiempo Real**
 
-## 1. Descripción general
+## **1. Introducción**
 
-El sistema de **Video Activity Recognition** permite reconocer actividades humanas en tiempo real usando la cámara web del equipo.  
-La aplicación:
+En esta tercera entrega se integran todos los componentes desarrollados en el proyecto para construir un **sistema completo de reconocimiento de actividades humanas (HAR) en tiempo real**, basado en visión por computador y aprendizaje automático.
 
-- Captura video desde la webcam.
-- Detecta la pose con MediaPipe.
-- Calcula métricas posturales (inclinación del tronco y ángulos de rodilla).
-- Clasifica la actividad actual con un modelo SVM entrenado previamente.
-- Muestra la predicción y las métricas directamente sobre el video.
+Los avances principales incluyen:
 
-La interfaz se ejecuta en una ventana de OpenCV llamada:
+- Reducción optimizada de características mediante **SelectKBest (ANOVA F-score)**.  
 
-> `HAR Tiempo Real - SVM`
+- Entrenamiento de un **SVM reducido con 70 características**, seleccionadas desde ~140 originales.  
 
----
+- Integración del modelo reducido en un **pipeline de inferencia en tiempo real**.  
 
-## 2. Requisitos del sistema
+- Construcción de una **interfaz visual (UI)** con información biomecánica complementaria.  
 
-### 2.1. Hardware
+- Despliegue multiplataforma mediante **ejecutable en Windows** y **Docker para Linux/Mac**.  
 
-- Cámara web funcional (integrada o USB).
-- CPU con soporte para operaciones de punto flotante (cualquier equipo moderno).
-- Se recomienda contar con al menos 8 GB de RAM para un funcionamiento fluido.
+Este README documenta la arquitectura del sistema, la metodología empleada, los resultados obtenidos y las instrucciones de despliegue.
 
-### 2.2. Windows (ejecutable)
+## ** 2. Objetivos de la Entrega 3**
 
-- Sistema operativo: Windows 10 o superior (64 bits).
-- No es necesario tener Python instalado para usar el **ejecutable**.
-- Permisos para ejecutar aplicaciones descargadas y acceso a la cámara.
+- Seleccionar un subconjunto óptimo de características que maximice el rendimiento del modelo.  
 
-### 2.3. Linux / Mac (Docker)
+- Entrenar y validar un modelo reducido que mantenga (o supere) el desempeño del modelo completo.  
 
-- Docker instalado y funcionando.
-- Acceso al dispositivo de video, normalmente `/dev/video0`.
-- Para entornos gráficos X11: permisos de acceso al servidor gráfico (`xhost`).
+- Integrar el modelo reducido en el sistema de inferencia.  
 
----
+- Construir la aplicación final en tiempo real con:  
+  - Predicción de actividad.  
 
-## 3. Formas de ejecución
+  - Probabilidad asociada.  
 
-El sistema se puede ejecutar de dos maneras:
+  - Métricas posturales (inclinación, ángulos de rodilla).  
 
-1. **Ejecutable para Windows** (`VideoActivityRecognition.exe`).
-2. **Imagen Docker** para Linux/Mac (o también en Windows con Docker Desktop + X11).
+  - Paneles superpuestos en video.  
 
----
+- Desplegar el sistema en forma de:  
+  - Ejecutable (.exe) para Windows.  
 
-## 4. Ejecución en Windows (ejecutable)
+  - Imagen Docker para Linux/Mac.  
 
-### 4.1. Descarga
+- Documentar limitaciones, mejoras logradas y líneas de trabajo futuro.  
 
-Descargar el ejecutable desde:
+## ** 3. Metodología de selección de características (Entrega 3)**
 
-```
-https://drive.google.com/file/d/1FdMknTccJYTd1WjFiD7QRudbJ90btPzD/view?usp=sharing
+En el notebook 01_svm_feature_reduction.ipynb se realizó el proceso sistemático de selección de características:
 
-```
+### **🔹 3.1. Dataset utilizado**
 
-Guárdalo en una carpeta de tu preferencia, por ejemplo: C:\VideoActivityRecognition\.
+Se empleó el features.csv de la Entrega 2, que contiene:
 
+- Todas las características extraídas por ventana temporal.  
 
-### 4.2. Formas de ejecutar
+- Labels (actividades).  
 
-#### ✔ Opción A - Doble clic
+- Identificadores de video para hacer particiones estratificadas.  
 
-- Navega a la carpeta donde descargaste el ejecutable.
-- Haz doble clic en **VideoActivityRecognition.exe**.
-- La cámara se activará y aparecerá la ventana principal del sistema.
+### **🔹 3.2. Split estratificado por video (GroupShuffleSplit)**
 
-#### ✔ Opción B - Línea de comandos
+Evita leakage temporal entre frames consecutivos del mismo video.
 
-- Abre **CMD** o **PowerShell**.
-- Cambia al directorio donde está el ejecutable:  
-    cd C:\\VideoActivityRecognition  
+### **🔹 3.3. Entrenamiento base**
 
-- Ejecuta:  
-    .\\VideoActivityRecognition.exe  
+Se entrenó un SVM con todas las características para obtener una línea base.
 
-**Nota:** El ejecutable utiliza internamente app_entry.py como punto de entrada, configura el entorno del modelo y lanza la aplicación gráfica en tiempo real.
+### **🔹 3.4. Selección de características**
 
-## 5\. Ejecución con Docker (Linux / Mac)
+Se evaluaron variantes con:
 
-### 5.1. Descargar la imagen Docker
+K ∈ {15, 30, 60, 70, 80, 90, 100}
 
-Descargar el archivo .tar desde el siguiente enlace:
+Cada modelo consistió en:
 
-Descargar Imagen Docker (Google Drive)
+Pipeline = \[SelectKBest(f_classif, k=K) → StandardScaler → SVM (RBF)\]
 
-### 5.2. Cargar la imagen
+### **🔹 3.5. Resultados**
 
-docker load -i video-har.tar  
+**Mejor modelo reducido:  
+<br/>**K = 70
 
-### 5.3. Habilitar acceso gráfico (X11)
+F1-macro = 0.887
 
-xhost +local:docker  
+- **Total de features seleccionadas:** 70  
 
-### 5.4. Ejecutar el contenedor
+**Primeras 10 features más relevantes:  
+<br/>**\['knee_left_mean', 'knee_left_std', 'knee_right_mean',
 
-Verifica que tu cámara sea /dev/video0. Luego inicia el contenedor:
+'knee_right_std', 'hip_left_mean', 'hip_left_std',
 
-sudo docker run -it --rm \\  
-\--device=/dev/video0:/dev/video0 \\  
-\-e DISPLAY=\$DISPLAY \\  
-\-v /tmp/.X11-unix:/tmp/.X11-unix:rw \\  
-\--network host \\  
-video-activity-recognition:latest  
+'hip_right_mean', 'hip_right_std', 'inclination_std',
 
-Esto ejecutará automáticamente la aplicación en tiempo real con la ventana de OpenCV.
+'vel_left_hip_mean'\]
 
-## 6\. Uso de la aplicación
+### **🔹 Archivos generados**
 
-### 6.1. Inicio del sistema
+- svm_reduced.joblib - mejor modelo reducido.  
 
-Al iniciar la aplicación se mostrará en consola un mensaje como:
+- selected_features.json - lista de características seleccionadas.  
 
-\============================================================  
-Video Activity Recognition - Real-time HAR System  
-\============================================================  
-Presiona 'q' en la ventana de video para salir  
+- feature_reduction_summary.md - resumen textual de resultados.  
 
-- Se abrirá la ventana **HAR Tiempo Real - SVM**.
-- La cámara se activará automáticamente.
+## ** 4. Principales descubrimientos (basado en log1 y log2)**
 
-### 6.2. Elementos en pantalla
+### **✔ Mejoras logradas gracias al muestreo correcto (cada 6 frames)**
 
-#### 📌 Panel de información (arriba izquierda)
+- El sistema ahora replica exactamente el muestreo usado en entrenamiento.  
 
-Incluye:
+- **Significativa mejora** en las actividades:  
+  - Sentarse  
 
-- Modelo cargado (SVM Full o Reduced)
-- FPS estimado
-- Visibilidad media de landmarks
-- Advertencias de baja visibilidad
+  - Pararse  
 
-**Ejemplo visual:**
+### **✔ Estabilidad general**
 
-Modelo: SVM reduced | FPS: 30.0  
-Visibilidad media: 0.85  
+- Actividades con patrones claros (caminar, caminar hacia atrás, desplazamientos) funcionan con estabilidad.  
 
-#### 📌 Estado de la actividad
+### **✔ Limitaciones actuales**
 
-- **Antes de tener suficientes frames:**  
-    Actividad: --- (calentando ventana)  
+- **Girar (rotate)** permanece como la actividad más difícil:  
+  - Variabilidad rotacional alta.  
 
-- **Cuando el sistema ya puede predecir:**  
-    Actividad: walking_forward (92.3%)  
+  - Baja visibilidad de landmarks en giros rápidos.  
 
-**Código de colores según confianza:**
+  - Falta de features basadas en orientación y rotación axial.  
 
-- 🔴 **Rojo:** probabilidad < 40%
-- 🟡 **Amarillo:** 40% - 70%
-- 🟢 **Verde:** > 70%
+## ** 5. Arquitectura del sistema en tiempo real**
 
-#### 📌 Métricas posturales (panel secundario)
+El sistema está constituido por 3 componentes principales:
 
-Incluye valores calculados en posture_metrics.py:
+### ** 5.1. Predictor temporal (realtime_inference.py)**
 
-Metricas postura:  
-trunk_inclination_deg: 4.3  
-knee_angle_l_deg: 91.7  
-knee_angle_r_deg: 89.2  
+Encargado de:
 
-#### 📌 Mensaje de salida
+- Buffer temporal de frames (deque).  
 
-Abajo de la ventana verás:
+Muestreo:  
+<br/>frame_sample_every = 6
 
-Pulsa 'q' para salir  
+Cálculo del **FPS efectivo**:  
+<br/>effective_fps = fps / 6
 
-## 7\. Cómo salir de la aplicación
+- Ensamblaje de ventanas temporales.  
 
-- En la ventana de video, presiona la tecla **q**.
-- La cámara se liberará y la ventana se cerrará.
-- **En Docker:** El contenedor se elimina automáticamente gracias al flag --rm.
+Generación del vector de características vía:  
+<br/>frames_to_feature_vector(...)
 
-## 8\. Solución de problemas
+- Inferencia con:  
+  - SVM reducido si existe.  
 
-### 8.1. Windows bloquea el ejecutable
+  - Fallback al SVM full si falta el reducido.  
 
-**Mensaje:** _"Windows protegió tu PC"_
+### ** Lógica de predicción**
 
-- **Solución:**
-  - Clic en **Más información**.
-  - Clic en **Ejecutar de todas formas**.
+Mínimo de frames requeridos para predecir:  
+<br/>min_frames = effective_fps × WINDOW_SIZE_SEC
 
-### 8.2. Error: no se puede abrir la cámara
+- Se emplea predict_proba (si disponible) o softmax sobre decision_function.  
 
-**Consola muestra:**
+Salida:  
+<br/>(label_predicha, probabilidad)
 
-\[UI\] No se pudo abrir la camara con indice 0  
+### ** 5.2. Métricas posturales (posture_metrics.py)**
 
-**Soluciones:**
+Calculadas en tiempo real:
 
-- Cerrar otras apps que usan cámara (Zoom, Teams, Meet, etc.).
-- Revisar permisos: _Configuración → Privacidad → Cámara → Activar acceso_.
-- Si tienes varias cámaras, puede que el índice correcto no sea 0.
+- trunk_inclination_deg  
+    Inclinación del tronco respecto a la vertical.  
 
-### 8.3. Advertencia de baja visibilidad
+- knee_angle_l_deg  
 
-**Si aparece:**
+- knee_angle_r_deg  
 
-Advertencia: baja visibilidad  
+Son mostradas en la UI para enriquecer el sistema.
 
-**Causas probables:**
+### ** 5.3. Interfaz visual (UI)**
 
-- Hay poca iluminación.
-- Estás muy lejos de la cámara.
-- El fondo está saturado o hay oclusiones.
+La UI (ui_app.py) muestra:
 
-**Solución:** Acercarse, mejorar la luz o cambiar el ángulo.
+#### **Panel 1 (información del modelo)**
 
-### 8.4. FPS bajos o lag
+- Variante utilizada (reduced/full).  
 
-**Posibles causantes:**
+- FPS estimado.  
 
-- Muchas apps abiertas consumiendo CPU/GPU.
-- Equipos de gama baja.
-- Ejecutar varios contenedores o instancias a la vez.
+- Visibilidad media.  
 
-**Soluciones:**
+- Advertencia si visibilidad < VISIBILITY_MIN.  
 
-- Cerrar procesos pesados.
-- Asegurar buena ventilación y conexión a energía.
+#### **Panel 2 (actividad)**
 
-## 9\. Notas técnicas
+- Actividad predicha.  
 
-- La predicción usa un **SVM optimizado** (versión _reduced_ por defecto).
-- El predictor acumula frames en un _buffer_ y usa un muestreo configurable (frame_sample_every).
-- Los cálculos de _trunk inclination_ y _knee angles_ salen del módulo posture_metrics.py.
-- El sistema usa **MediaPipe Pose** con:
-  - min_detection_confidence=0.5
-  - min_tracking_confidence=0.5
+- Probabilidad asociada.  
 
-## 10\. Soporte
+- Código de color:  
+  - Verde → conf. > 70%  
 
-Si la aplicación genera un archivo error_log.txt, inclúyelo al solicitar ayuda.
+  - Amarillo → 40-70%  
 
-También envía:
+  - Rojo → < 40%  
 
-- Tipo de ejecución (Windows / Docker)
-- Sistema operativo
-- Captura del error
+#### **Panel 3 (métricas posturales)**
+
+#### **Control de salida:**
+
+Presiona 'q' para salir
+
+## ** 6. Despliegue del sistema**
+
+### ** 6.1. Ejecutable para Windows**
+
+Construido con PyInstaller:
+
+- Script principal: app_entry.py.  
+
+Comando principal ejecuta:  
+<br/>run_realtime_app(camera_index=0)
+
+- Manejo de errores robusto:  
+  - Si falla, genera error_log.txt.  
+
+### ** 6.2. Imagen Docker (Linux/Mac)**
+
+Características del contenedor:
+
+- Basado en python:3.11-slim.  
+
+- Incluye:  
+  - OpenCV  
+
+  - MediaPipe  
+
+  - scikit-learn  
+
+  - Numpy, Pandas  
+
+Expone la aplicación mediante:  
+<br/>python -m Entrega3.src.online.ui_app
+
+Permite ejecutar en entornos Linux sin necesidad de instalar dependencias.
+
+## ** 7. Resultados en tiempo real**
+
+### **✔ Actividades que funcionan muy bien**
+
+- Caminar adelante / atrás  
+
+- Movimiento lateral  
+
+- Posturas estáticas  
+
+- Pararse / sentarse (mejorado en Entrega 3)  
+
+### **✔ Actividades con desempeño moderado**
+
+- Girar  
+    (por poca visibilidad y falta de features especializadas)  
+
+### **✔ Métricas reportadas en UI**
+
+- Inclinación del tronco (°)  
+
+- Angulo de rodilla izquierda (°)  
+
+- Angulo de rodilla derecha (°)  
+
+- Probabilidad de la actividad  
+
+### **✔ Estabilidad**
+
+- La inferencia es fluida gracias al muestreo reducido.  
+
+- El pipeline es consistente con el entrenamiento → principal mejora.  
+
+## ** 8. Limitaciones y trabajo futuro**
+
+### ** Limitaciones**
+
+- Actividad "girar" sigue siendo la de menor precisión.  
+
+- El sistema depende fuertemente de visibilidad:  
+  - luz adecuada  
+
+  - ausencia de oclusiones  
+
+  - distancia óptima de la cámara
