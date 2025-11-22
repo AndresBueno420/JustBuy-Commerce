@@ -2,7 +2,7 @@
 
 ### **Selección de Características, Modelo Final SVM Reducido y Despliegue en Tiempo Real**
 
-## **1. Introducción**
+## **📌 1. Introducción**
 
 En esta tercera entrega se integran todos los componentes desarrollados en el proyecto para construir un **sistema completo de reconocimiento de actividades humanas (HAR) en tiempo real**, basado en visión por computador y aprendizaje automático.
 
@@ -20,7 +20,7 @@ Los avances principales incluyen:
 
 Este README documenta la arquitectura del sistema, la metodología empleada, los resultados obtenidos y las instrucciones de despliegue.
 
-## ** 2. Objetivos de la Entrega 3**
+## **📌 2. Objetivos de la Entrega 3**
 
 - Seleccionar un subconjunto óptimo de características que maximice el rendimiento del modelo.  
 
@@ -44,7 +44,7 @@ Este README documenta la arquitectura del sistema, la metodología empleada, los
 
 - Documentar limitaciones, mejoras logradas y líneas de trabajo futuro.  
 
-## ** 3. Metodología de selección de características (Entrega 3)**
+## **📌 3. Metodología de selección de características (Entrega 3)**
 
 En el notebook 01_svm_feature_reduction.ipynb se realizó el proceso sistemático de selección de características:
 
@@ -102,7 +102,7 @@ F1-macro = 0.887
 
 - feature_reduction_summary.md - resumen textual de resultados.  
 
-## ** 4. Principales descubrimientos (basado en log1 y log2)**
+## **📌 4. Principales descubrimientos (basado en log1 y log2)**
 
 ### **✔ Mejoras logradas gracias al muestreo correcto (cada 6 frames)**
 
@@ -126,11 +126,11 @@ F1-macro = 0.887
 
   - Falta de features basadas en orientación y rotación axial.  
 
-## ** 5. Arquitectura del sistema en tiempo real**
+## **📌 5. Arquitectura del sistema en tiempo real**
 
 El sistema está constituido por 3 componentes principales:
 
-### ** 5.1. Predictor temporal (realtime_inference.py)**
+### **🔹 5.1. Predictor temporal (realtime_inference.py)**
 
 Encargado de:
 
@@ -152,7 +152,7 @@ Generación del vector de características vía:
 
   - Fallback al SVM full si falta el reducido.  
 
-### ** Lógica de predicción**
+### **🧠 Lógica de predicción**
 
 Mínimo de frames requeridos para predecir:  
 <br/>min_frames = effective_fps × WINDOW_SIZE_SEC
@@ -162,7 +162,7 @@ Mínimo de frames requeridos para predecir:
 Salida:  
 <br/>(label_predicha, probabilidad)
 
-### ** 5.2. Métricas posturales (posture_metrics.py)**
+### **🔹 5.2. Métricas posturales (posture_metrics.py)**
 
 Calculadas en tiempo real:
 
@@ -175,7 +175,7 @@ Calculadas en tiempo real:
 
 Son mostradas en la UI para enriquecer el sistema.
 
-### ** 5.3. Interfaz visual (UI)**
+### **🔹 5.3. Interfaz visual (UI)**
 
 La UI (ui_app.py) muestra:
 
@@ -208,9 +208,9 @@ La UI (ui_app.py) muestra:
 
 Presiona 'q' para salir
 
-## ** 6. Despliegue del sistema**
+## **📌 6. Despliegue del sistema**
 
-### ** 6.1. Ejecutable para Windows**
+### **🔹 6.1. Ejecutable para Windows**
 
 Construido con PyInstaller:
 
@@ -222,7 +222,7 @@ Comando principal ejecuta:
 - Manejo de errores robusto:  
   - Si falla, genera error_log.txt.  
 
-### ** 6.2. Imagen Docker (Linux/Mac)**
+### **🔹 6.2. Imagen Docker (Linux/Mac)**
 
 Características del contenedor:
 
@@ -242,7 +242,7 @@ Expone la aplicación mediante:
 
 Permite ejecutar en entornos Linux sin necesidad de instalar dependencias.
 
-## ** 7. Resultados en tiempo real**
+## **📌 7. Resultados en tiempo real**
 
 ### **✔ Actividades que funcionan muy bien**
 
@@ -275,9 +275,9 @@ Permite ejecutar en entornos Linux sin necesidad de instalar dependencias.
 
 - El pipeline es consistente con el entrenamiento → principal mejora.  
 
-## ** 8. Limitaciones y trabajo futuro**
+## **📌 8. Limitaciones y trabajo futuro**
 
-### ** Limitaciones**
+### **🔸 Limitaciones**
 
 - Actividad "girar" sigue siendo la de menor precisión.  
 
