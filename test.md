@@ -275,9 +275,9 @@ Permite ejecutar en entornos Linux sin necesidad de instalar dependencias.
 
 - El pipeline es consistente con el entrenamiento → principal mejora.  
 
-## **📌 8. Limitaciones y trabajo futuro**
+## ** 8. Limitaciones y trabajo futuro**
 
-### **🔸 Limitaciones**
+### ** Limitaciones**
 
 - Actividad "girar" sigue siendo la de menor precisión.  
 
