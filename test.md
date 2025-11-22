@@ -1,3 +1,70 @@
+# Manual de Usuario  
+## Sistema de Reconocimiento de Actividades en Video (Video Activity Recognition)
+
+---
+
+## 1. Descripción general
+
+El sistema de **Video Activity Recognition** permite reconocer actividades humanas en tiempo real usando la cámara web del equipo.  
+La aplicación:
+
+- Captura video desde la webcam.
+- Detecta la pose con MediaPipe.
+- Calcula métricas posturales (inclinación del tronco y ángulos de rodilla).
+- Clasifica la actividad actual con un modelo SVM entrenado previamente.
+- Muestra la predicción y las métricas directamente sobre el video.
+
+La interfaz se ejecuta en una ventana de OpenCV llamada:
+
+> `HAR Tiempo Real - SVM`
+
+---
+
+## 2. Requisitos del sistema
+
+### 2.1. Hardware
+
+- Cámara web funcional (integrada o USB).
+- CPU con soporte para operaciones de punto flotante (cualquier equipo moderno).
+- Se recomienda contar con al menos 8 GB de RAM para un funcionamiento fluido.
+
+### 2.2. Windows (ejecutable)
+
+- Sistema operativo: Windows 10 o superior (64 bits).
+- No es necesario tener Python instalado para usar el **ejecutable**.
+- Permisos para ejecutar aplicaciones descargadas y acceso a la cámara.
+
+### 2.3. Linux / Mac (Docker)
+
+- Docker instalado y funcionando.
+- Acceso al dispositivo de video, normalmente `/dev/video0`.
+- Para entornos gráficos X11: permisos de acceso al servidor gráfico (`xhost`).
+
+---
+
+## 3. Formas de ejecución
+
+El sistema se puede ejecutar de dos maneras:
+
+1. **Ejecutable para Windows** (`VideoActivityRecognition.exe`).
+2. **Imagen Docker** para Linux/Mac (o también en Windows con Docker Desktop + X11).
+
+---
+
+## 4. Ejecución en Windows (ejecutable)
+
+### 4.1. Descarga
+
+Descargar el ejecutable desde:
+
+```
+https://drive.google.com/file/d/1FdMknTccJYTd1WjFiD7QRudbJ90btPzD/view?usp=sharing
+
+```
+
+Guárdalo en una carpeta de tu preferencia, por ejemplo: C:\VideoActivityRecognition\.
+
+
 ### 4.2. Formas de ejecutar
 
 #### ✔ Opción A - Doble clic
