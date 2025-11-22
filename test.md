@@ -1,3 +1,4 @@
+```
 proyecto-video-activity-recognition/
 ├── Entrega1/
 │   ├── docs/                 # Documentación inicial (informe, imágenes)
@@ -45,3 +46,4 @@ proyecto-video-activity-recognition/
 ├── report.md                 # Reporte final del proyecto
 ├── LICENSE
 └── README.md
+```
