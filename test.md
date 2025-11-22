@@ -1,49 +1,26 @@
-```
-proyecto-video-activity-recognition/
-├── Entrega1/
-│   ├── docs/                 # Documentación inicial (informe, imágenes)
-│   │   ├── images/           # Imagenes usadas para los informes
-│   │   └── informe.md
-│   ├── notebooks/            # EDA y exploración inicial
-│   │   └── EDA_COMP.ipynb
-│   ├── src/                  # Extracción de landmarks y scripts auxiliares
-│   │   ├── load_video_info_to_supabase.py
-│   │   └── mediapipe_extract.py
-│   ├── README.md             # Resumen de la primera entrega
-│   ├── requirements.txt
-│   └── .gitignore
-├── Entrega2/
-│   ├── docs/
-│   │   └── informe.md        # Documentación de la fase de modelado
-│   ├── experiments/
-│   │   └── logs/             # Registro de experimentos (log1, log2, log3)
-│   ├── models/               # Modelos entrenados
-│   │   ├── label_encoder.joblib
-│   │   ├── rf_best.joblib
-│   │   ├── svm_best.joblib
-│   │   └── xgb_best.joblib
-│   ├── results/              # Métricas, gráficas, reportes y features
-│   ├── notebooks/            # Pipeline reproducible
-│   │   ├── 01_preprocesamiento.ipynb
-│   │   ├── 02_modelado.ipynb
-│   │   └── 03_resultados.ipynb
-│   ├── src/                  # Código fuente modular
-│   │   ├── features/
-│   │   ├── models/
-│   │   └── utils/
-│   ├── README.md
-│   └── requirements.txt
-├── Entrega3/
-│   ├── docs/
-│   ├── experiments/
-│   └── src/
-├── sources/                  # Recursos adicionales (DDL, modelos, imágenes)
-├── Dockerfile                # Imagen para despliegue
-├── app_entry.py              # Entry point de la app
-├── build_exe.py              # Script de generación de ejecutable
-├── VideoActivityRecognition.spec
-├── estructura_proyecto.md
-├── report.md                 # Reporte final del proyecto
-├── LICENSE
-└── README.md
-```
+4.2. Formas de ejecutar✔ Opción A – Doble clicNavega a la carpeta donde descargaste el ejecutable.Haz doble clic en VideoActivityRecognition.exe.La cámara se activará y aparecerá la ventana principal del sistema.✔ Opción B – Línea de comandosAbre CMD o PowerShell.Cambia al directorio donde está el ejecutable:cd C:\VideoActivityRecognition
+Ejecuta:.\VideoActivityRecognition.exe
+Nota: El ejecutable utiliza internamente app_entry.py como punto de entrada, configura el entorno del modelo y lanza la aplicación gráfica en tiempo real.5. Ejecución con Docker (Linux / Mac)5.1. Descargar la imagen DockerDescargar el archivo .tar desde el siguiente enlace:Descargar Imagen Docker (Google Drive)5.2. Cargar la imagendocker load -i video-har.tar
+5.3. Habilitar acceso gráfico (X11)xhost +local:docker
+5.4. Ejecutar el contenedorVerifica que tu cámara sea /dev/video0. Luego inicia el contenedor:sudo docker run -it --rm \
+  --device=/dev/video0:/dev/video0 \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  --network host \
+  video-activity-recognition:latest
+Esto ejecutará automáticamente la aplicación en tiempo real con la ventana de OpenCV.6. Uso de la aplicación6.1. Inicio del sistemaAl iniciar la aplicación se mostrará en consola un mensaje como:============================================================
+Video Activity Recognition - Real-time HAR System
+============================================================
+Presiona 'q' en la ventana de video para salir
+Se abrirá la ventana HAR Tiempo Real - SVM.La cámara se activará automáticamente.6.2. Elementos en pantalla📌 Panel de información (arriba izquierda)Incluye:Modelo cargado (SVM Full o Reduced)FPS estimadoVisibilidad media de landmarksAdvertencias de baja visibilidadEjemplo visual:Modelo: SVM reduced | FPS: 30.0
+Visibilidad media: 0.85
+📌 Estado de la actividadAntes de tener suficientes frames:Actividad: --- (calentando ventana)
+Cuando el sistema ya puede predecir:Actividad: walking_forward (92.3%)
+Código de colores según confianza:🔴 Rojo: probabilidad < 40%🟡 Amarillo: 40% – 70%🟢 Verde: > 70%📌 Métricas posturales (panel secundario)Incluye valores calculados en posture_metrics.py:Metricas postura:
+  trunk_inclination_deg: 4.3
+  knee_angle_l_deg: 91.7
+  knee_angle_r_deg: 89.2
+📌 Mensaje de salidaAbajo de la ventana verás:Pulsa 'q' para salir
+7. Cómo salir de la aplicaciónEn la ventana de video, presiona la tecla q.La cámara se liberará y la ventana se cerrará.En Docker: El contenedor se elimina automáticamente gracias al flag --rm.8. Solución de problemas8.1. Windows bloquea el ejecutableMensaje: “Windows protegió tu PC”Solución:Clic en Más información.Clic en Ejecutar de todas formas.8.2. Error: no se puede abrir la cámaraConsola muestra:[UI] No se pudo abrir la camara con indice 0
+Soluciones:Cerrar otras apps que usan cámara (Zoom, Teams, Meet, etc.).Revisar permisos: Configuración → Privacidad → Cámara → Activar acceso.Si tienes varias cámaras, puede que el índice correcto no sea 0.8.3. Advertencia de baja visibilidadSi aparece:Advertencia: baja visibilidad
+Causas probables:Hay poca iluminación.Estás muy lejos de la cámara.El fondo está saturado o hay oclusiones.Solución: Acercarse, mejorar la luz o cambiar el ángulo.8.4. FPS bajos o lagPosibles causantes:Muchas apps abiertas consumiendo CPU/GPU.Equipos de gama baja.Ejecutar varios contenedores o instancias a la vez.Soluciones:Cerrar procesos pesados.Asegurar buena ventilación y conexión a energía.9. Notas técnicasLa predicción usa un SVM optimizado (versión reduced por defecto).El predictor acumula frames en un buffer y usa un muestreo configurable (frame_sample_every).Los cálculos de trunk inclination y knee angles salen del módulo posture_metrics.py.El sistema usa MediaPipe Pose con:min_detection_confidence=0.5min_tracking_confidence=0.510. SoporteSi la aplicación genera un archivo error_log.txt, inclúyelo al solicitar ayuda.También envía:Tipo de ejecución (Windows / Docker)Sistema operativoCaptura del error
